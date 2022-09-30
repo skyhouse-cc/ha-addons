@@ -1,10 +1,9 @@
 ---
-version: 6.1.2
+version: 6.1.5
 slug: mosquitto
 name: Mosquitto broker (anon)
 description: An Open Source MQTT broker
 url: https://github.com/home-assistant/hassio-addons/tree/master/mosquitto
-codenotary: notary@home-assistant.io
 arch:
   - armhf
   - armv7
@@ -14,7 +13,6 @@ arch:
 auth_api: true
 discovery:
   - mqtt
-image: homeassistant/{arch}-addon-mosquitto
 map:
   - ssl
   - share

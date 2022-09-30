@@ -6,7 +6,7 @@ WORKDIR /usr/src
 ARG MOSQUITTO_AUTH_VERSION
 RUN apt-get update \
     && apt-get install -qy --no-install-recommends \
-        mosquitto \
+        mosquitto pwgen \
     \
     && apt-get clean \
     && rm -fr \

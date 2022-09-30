@@ -14,46 +14,6 @@ declare service_password
 declare ssl
 declare username
 
-# Read or create system account data
-if ! bashio::fs.file_exists "${SYSTEM_USER}"; then
-  discovery_password="$(pwgen 64 1)"
-  service_password="$(pwgen 64 1)"
-
-  # Store it for future use
-  bashio::var.json \
-    homeassistant "^$(bashio::var.json password "${discovery_password}")" \
-    addons "^$(bashio::var.json password "${service_password}")" \
-    > "${SYSTEM_USER}"
-else
-  # Read the existing values
-  discovery_password=$(bashio::jq "${SYSTEM_USER}" ".homeassistant.password")
-  service_password=$(bashio::jq "${SYSTEM_USER}" ".addons.password")
-fi
-
-# Set up discovery user
-password=$(pw -p "${discovery_password}")
-echo "homeassistant:${password}" >> "${PW}"
-echo "user homeassistant" >> "${ACL}"
-
-# Set up service user
-password=$(pw -p "${service_password}")
-echo "addons:${password}" >> "${PW}"
-echo "user addons" >> "${ACL}"
-
-# Set username and password for the broker
-for login in $(bashio::config 'logins|keys'); do
-  bashio::config.require.username "logins[${login}].username"
-  bashio::config.require.password "logins[${login}].password"
-
-  username=$(bashio::config "logins[${login}].username")
-  password=$(bashio::config "logins[${login}].password")
-
-  bashio::log.info "Setting up user ${username}"
-  password=$(pw -p "${password}")
-  echo "${username}:${password}" >> "${PW}"
-  echo "user ${username}" >> "${ACL}"
-done
-
 keyfile="/ssl/$(bashio::config 'keyfile')"
 certfile="/ssl/$(bashio::config 'certfile')"
 cafile="/ssl/$(bashio::config 'cafile')"
